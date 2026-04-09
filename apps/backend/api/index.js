@@ -18,13 +18,30 @@ const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
   "https://india-geo-saas-obt4.vercel.app",
+  "https://india-geo-saas-obt4-git-main-manas-s-projects-b7b9fe55.vercel.app",
+  "https://india-geo-saas-obt4-git-main-manas-s-projects-b7b9fe55.vercel.app/",
+  "https://india-geo-saas-obt4-nhu7sb5hj-manas-s-projects-b7b9fe55.vercel.app",
+  "https://india-geo-saas-obt4-nhu7sb5hj-manas-s-projects-b7b9fe55.vercel.app/",
+  "https://india-geo-saas-obt4-nhu7sb5hj-manas-s-projects-b7b9fe55.vercel.app/demo",
+  "https://india-geo-saas-obt4-nhu7sb5hj-manas-s-projects-b7b9fe55.vercel.app/login",
+  "https://india-geo-saas-obt4-nhu7sb5hj-manas-s-projects-b7b9fe55.vercel.app/login/",
+  "https://india-geo-saas-obt4-nhu7sb5hj-manas-s-projects-b7b9fe55.vercel.app/register",
+  "https://india-geo-saas-obt4-nhu7sb5hj-manas-s-projects-b7b9fe55.vercel.app/register/",
+  "https://india-geo-saas-obt4-nhu7sb5hj-manas-s-projects-b7b9fe55.vercel.app/dashboard",
+  "https://india-geo-saas-obt4-nhu7sb5hj-manas-s-projects-b7b9fe55.vercel.app/dashboard/",
+  "https://india-geo-saas-obt4-nhu7sb5hj-manas-s-projects-b7b9fe55.vercel.app/admin",
+  "https://india-geo-saas-obt4-nhu7sb5hj-manas-s-projects-b7b9fe55.vercel.app/admin/",
+  "https://india-geo-saas-obt4-nhu7sb5hj-manas-s-projects-b7b9fe55.vercel.app/admin/users",
+  "https://india-geo-saas-obt4-nhu7sb5hj-manas-s-projects-b7b9fe55.vercel.app/admin/users/",
+  "https://india-geo-saas-obt4-nhu7sb5hj-manas-s-projects-b7b9fe55.vercel.app/admin/users/1",
+  "https://india-geo-saas-obt4-nhu7sb5hj-manas-s-projects-b7b9fe55.vercel.app/admin/users/1/",
 ];
 
 app.use((req, res, next) => {
   const origin = req.headers.origin;
   // Allow any vercel.app domain + localhost
   if (!origin || origin.includes("vercel.app") || allowedOrigins.includes(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin || "*");
+    res.setHeader("Access-Control-Allow-Origin", origin || "http://localhost:5173,https://india-geo-saas-obt4.vercel.app,https://india-geo-saas-obt4-git-main-manas-s-projects-b7b9fe55.vercel.app,https://india-geo-saas-obt4-nhu7sb5hj-manas-s-projects-b7b9fe55.vercel.app");
     res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type,Authorization,X-API-Key");
     res.setHeader("Access-Control-Allow-Credentials", "true");
