@@ -17,7 +17,7 @@ const usageTracker       = require("./middleware/usageTracker");
 
 // CORS — allow all origins in production, specific in dev
 app.use(cors({
-  origin: "*",
+  origin: ["https://india-geo-saas-obt4.vercel.app", "http://localhost:5173"],
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization", "X-API-Key"],
   credentials: false,
