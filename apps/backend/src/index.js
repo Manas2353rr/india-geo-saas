@@ -16,12 +16,32 @@ const usageTracker       = require("./middleware/usageTracker");
 
 
 // CORS — allow all origins in production, specific in dev
+const allowedOrigins = [
+  "https://india-geo-saas-obt4.vercel.app",
+  "http://localhost:5173"
+];
+
 app.use(cors({
-  origin: ["https://india-geo-saas-obt4.vercel.app", "https://india-geo-saas-obt4-git-main-manas-s-projects-b7b9fe55.vercel.app", "https://india-geo-saas-obt4-nhu7sb5hj-manas-s-projects-b7b9fe55.vercel.app", "http://localhost:5173"],
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin) return callback(null, true);
+    
+    const isAllowed = allowedOrigins.includes(origin);
+    const isVercelPreview = origin.endsWith(".vercel.app") && origin.includes("india-geo-saas-obt4");
+
+    if (isAllowed || isVercelPreview) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization", "X-API-Key"],
-  credentials: false,
+  credentials: true // Change to true if you use cookies/sessions, else false is fine
 }));
+
+
+app.options("*", cors());
 
 app.use(express.json());
 
