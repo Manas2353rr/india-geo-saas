@@ -1,0 +1,145 @@
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-1.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model State {
+  id        Int       @id @default(autoincrement())
+  code      String    @unique
+  name      String
+  createdAt DateTime  @default(now())
+
+  districts    District[]
+  users        UserStateAccess[]
+
+  @@index([code])
+}
+
+model District {
+  id       Int    @id @default(autoincrement())
+  code     String
+  name     String
+  stateId  Int
+
+  state        State         @relation(fields: [stateId], references: [id])
+  subDistricts SubDistrict[]
+
+  @@unique([code, stateId])
+  @@index([stateId])
+}
+
+model SubDistrict {
+  id         Int    @id @default(autoincrement())
+  code       String
+  name       String
+  districtId Int
+
+  district District  @relation(fields: [districtId], references: [id])
+  villages Village[]
+
+  @@unique([code, districtId])
+  @@index([districtId])
+}
+
+model Village {
+  id            Int    @id @default(autoincrement())
+  code          String @unique
+  name          String
+  subDistrictId Int
+
+  subDistrict SubDistrict @relation(fields: [subDistrictId], references: [id])
+
+  @@index([subDistrictId])
+  @@index([name])
+}
+
+enum PlanType {
+  FREE
+  PREMIUM
+  PRO
+  UNLIMITED
+}
+
+enum UserStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+}
+
+enum UserRole {
+  ADMIN
+  CLIENT
+}
+
+model User {
+  id           Int        @id @default(autoincrement())
+  email        String     @unique
+  passwordHash String
+  businessName String
+  phone        String?
+  gstNumber    String?
+  role         UserRole   @default(CLIENT)
+  status       UserStatus @default(PENDING)
+  planType     PlanType   @default(FREE)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  apiKeys     ApiKey[]
+  usageLogs   UsageLog[]
+  stateAccess UserStateAccess[]
+
+  @@index([email])
+  @@index([status])
+}
+
+model ApiKey {
+  id         Int       @id @default(autoincrement())
+  prefix     String
+  keyHash    String    @unique
+  name       String
+  isActive   Boolean   @default(true)
+  userId     Int
+  lastUsedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  user      User       @relation(fields: [userId], references: [id])
+  usageLogs UsageLog[]
+
+  @@index([keyHash])
+  @@index([userId])
+}
+
+model UserStateAccess {
+  userId    Int
+  stateId   Int
+  grantedAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id])
+  state State @relation(fields: [stateId], references: [id])
+
+  @@id([userId, stateId])
+}
+
+model UsageLog {
+  id             Int      @id @default(autoincrement())
+  apiKeyId       Int?
+  userId         Int?
+  endpoint       String
+  method         String
+  statusCode     Int
+  responseTimeMs Int
+  ipAddress      String?
+  createdAt      DateTime @default(now())
+
+  apiKey ApiKey? @relation(fields: [apiKeyId], references: [id])
+  user   User?   @relation(fields: [userId], references: [id])
+
+  @@index([createdAt])
+  @@index([userId, createdAt])
+  @@index([apiKeyId])
+}
