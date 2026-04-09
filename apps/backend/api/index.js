@@ -14,7 +14,7 @@ const app = express();
 
 // CORS headers manually — works on all Vercel deployments
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "https://india-geo-saas-obt4.vercel.app/api/v1");
+  res.header("Access-Control-Allow-Origin", "https://india-geo-saas-obt4.vercel.app , https://india-geo-saas-obt4-hr3nbvqkn-manas-s-projects.vercel.app");
   res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-API-Key");
   res.header("Access-Control-Allow-Credentials", "true");
