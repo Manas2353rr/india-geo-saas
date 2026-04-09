@@ -1,5 +1,4 @@
 const express = require("express");
-const cors    = require("cors");
 const { v4: uuidv4 } = require("uuid");
 
 const authRoutes         = require("../src/routes/auth.routes");
@@ -13,27 +12,13 @@ const usageTracker       = require("../src/middleware/usageTracker");
 
 const app = express();
 
-// ── CORS — handle ALL vercel preview URLs + localhost ──────────────
-const allowedOrigins = [
-  "http://localhost:5173",
-  "http://localhost:3000",
-  "https://india-geo-saas-obt4.vercel.app",
-  "https://india-geo-saas-obt4-git-main-manas-s-projects-b7b9fe55.vercel.app",
-  "https://india-geo-saas-obt4-nhu7sb5hj-manas-s-projects-b7b9fe55.vercel.app",
-];
-
+// CORS headers manually — works on all Vercel deployments
 app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  // Allow any vercel.app domain + localhost
-  if (!origin || origin.includes("vercel.app") || allowedOrigins.includes(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin || "*");
-    res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type,Authorization,X-API-Key");
-    res.setHeader("Access-Control-Allow-Credentials", "true");
-  }
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
-  }
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "*");
+  res.header("Access-Control-Allow-Headers", "*");
+  res.header("Access-Control-Allow-Credentials", "false");
+  if (req.method === "OPTIONS") return res.status(200).end();
   next();
 });
 
