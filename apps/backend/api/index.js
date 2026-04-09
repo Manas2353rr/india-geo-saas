@@ -14,9 +14,13 @@ const usageTracker       = require("../src/middleware/usageTracker");
 const app = express();
 
 app.use(cors({
-  origin: "*",
+  origin: [
+    "https://india-geo-saas-obt4.vercel.app",
+    "http://localhost:5173",
+  ],
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization", "X-API-Key"],
+  credentials: true,
 }));
 
 app.use(express.json());
