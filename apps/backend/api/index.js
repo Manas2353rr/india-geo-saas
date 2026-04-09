@@ -1,5 +1,5 @@
 const express = require("express");
-const cors = require("cors");
+const cors    = require("cors");
 const { v4: uuidv4 } = require("uuid");
 
 const authRoutes         = require("../src/routes/auth.routes");
@@ -13,15 +13,26 @@ const usageTracker       = require("../src/middleware/usageTracker");
 
 const app = express();
 
-app.use(cors({
-  origin: [
-    "https://india-geo-saas-obt4.vercel.app",
-    "http://localhost:5173",
-  ],
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "X-API-Key"],
-  credentials: true,
-}));
+// ── CORS — handle ALL vercel preview URLs + localhost ──────────────
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:3000",
+];
+
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  // Allow any vercel.app domain + localhost
+  if (!origin || origin.includes("vercel.app") || allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin || "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type,Authorization,X-API-Key");
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+  }
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+  next();
+});
 
 app.use(express.json());
 
@@ -34,10 +45,7 @@ app.use((req, res, next) => {
 app.use(usageTracker);
 
 app.get("/health", (req, res) => {
-  res.json({
-    status: "ok",
-    timestamp: new Date().toISOString(),
-  });
+  res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
 app.use("/api/v1/auth",         authRoutes);
