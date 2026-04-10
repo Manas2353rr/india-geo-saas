@@ -99,32 +99,44 @@ router.get("/analytics", async (req, res) => {
   try {
     const today = new Date(); today.setHours(0, 0, 0, 0);
     const thirtyDaysAgo = new Date(); thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    const [totalUsers, activeUsers, totalRequests, todayRequests, planBreakdown, topEndpoints, villageCount] =
-      await Promise.all([
-        prisma.user.count({ where: { role: "CLIENT" } }),
-        prisma.user.count({ where: { role: "CLIENT", status: "ACTIVE" } }),
-        prisma.usageLog.count(),
-        prisma.usageLog.count({ where: { createdAt: { gte: today } } }),
-        prisma.user.groupBy({
-          by: ["planType"], where: { role: "CLIENT" }, _count: { planType: true },
-        }),
-        prisma.usageLog.groupBy({
-          by: ["endpoint"], _count: { endpoint: true },
-          orderBy: { _count: { endpoint: "desc" } }, take: 10,
-        }),
-        prisma.village.count(),
-      ]);
+
+    const [
+      totalUsers, activeUsers, totalRequests, todayRequests,
+      planBreakdown, topEndpoints, villageCount, districtCount, stateCount,
+    ] = await Promise.all([
+      prisma.user.count({ where: { role: "CLIENT" } }),
+      prisma.user.count({ where: { role: "CLIENT", status: "ACTIVE" } }),
+      prisma.usageLog.count(),
+      prisma.usageLog.count({ where: { createdAt: { gte: today } } }),
+      prisma.user.groupBy({
+        by: ["planType"], where: { role: "CLIENT" }, _count: { planType: true },
+      }),
+      prisma.usageLog.groupBy({
+        by: ["endpoint"], _count: { endpoint: true },
+        orderBy: { _count: { endpoint: "desc" } }, take: 10,
+      }),
+      prisma.village.count(),
+      prisma.district.count(),
+      prisma.state.count(),
+    ]);
+
     return sendSuccess(res, {
       users: { total: totalUsers, active: activeUsers, pending: totalUsers - activeUsers },
       requests: { total: totalRequests, today: todayRequests },
-      data: { villages: villageCount },
+      data: {
+        villages:  villageCount,
+        districts: districtCount,
+        states:    stateCount,
+      },
       planBreakdown: planBreakdown.map((p) => ({ plan: p.planType, count: p._count.planType })),
-      topEndpoints: topEndpoints.map((e) => ({ endpoint: e.endpoint, count: e._count.endpoint })),
+      topEndpoints:  topEndpoints.map((e) => ({ endpoint: e.endpoint, count: e._count.endpoint })),
     });
   } catch (err) {
+    console.error("Analytics error:", err);
     return sendError(res, "Failed to fetch analytics.");
   }
 });
+
 
 router.get("/logs", async (req, res) => {
   try {
