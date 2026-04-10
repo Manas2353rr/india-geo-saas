@@ -1,6 +1,5 @@
 const express = require("express");
 const { v4: uuidv4 } = require("uuid");
-const cors = require("cors");
 
 const authRoutes         = require("../src/routes/auth.routes");
 const geoRoutes          = require("../src/routes/geo.routes");
@@ -13,14 +12,27 @@ const usageTracker       = require("../src/middleware/usageTracker");
 
 const app = express();
 
-// CORS headers manually — works on all Vercel deployments
-app.use(cors({
-  origin: [
-    "https://india-geo-saas-obt4.vercel.app",
-    "https://india-geo-saas-obt4-hr3nbvqkn-manas-s-projects.vercel.app"
-  ],
-  credentials: true
-}));
+// ── OPTIONS preflight — must be FIRST ─────────────────────────────
+app.options("*", (req, res) => {
+  res.set({
+    "Access-Control-Allow-Origin":  "*",
+    "Access-Control-Allow-Methods": "GET,POST,PUT,PATCH,DELETE,OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type,Authorization,X-API-Key",
+    "Access-Control-Max-Age":       "86400",
+  });
+  return res.status(204).end();
+});
+
+// ── CORS on all other requests ─────────────────────────────────────
+app.use((req, res, next) => {
+  res.set({
+    "Access-Control-Allow-Origin":  "*",
+    "Access-Control-Allow-Methods": "GET,POST,PUT,PATCH,DELETE,OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type,Authorization,X-API-Key",
+  });
+  next();
+});
+
 app.use(express.json());
 
 app.use((req, res, next) => {
