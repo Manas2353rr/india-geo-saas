@@ -8,9 +8,8 @@ A production-grade B2B SaaS platform providing REST API access to India's comple
 - Manages API keys, rate limiting, and billing tiers
 
 ## Live URLs
-- Backend API: https://your-backend.vercel.app
-- Frontend: https://your-frontend.vercel.app
-- Demo: https://your-frontend.vercel.app/demo
+https://india-geo-saas-obt4.vercel.app
+
 
 ## API Quick Start
 ```bash
