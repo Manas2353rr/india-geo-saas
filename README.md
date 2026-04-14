@@ -11,21 +11,6 @@ A production-grade B2B SaaS platform providing REST API access to India's comple
 https://india-geo-saas-obt4.vercel.app
 
 
-## API Quick Start
-```bash
-# Get all states
-curl https://your-api.vercel.app/api/v1/geo/states \
-  -H "X-API-Key: your_key"
-
-# Search villages
-curl "https://your-api.vercel.app/api/v1/search?q=manibeli" \
-  -H "X-API-Key: your_key"
-
-# Autocomplete
-curl "https://your-api.vercel.app/api/v1/autocomplete?q=man" \
-  -H "X-API-Key: your_key"
-```
-
 ## Tech Stack
 - Backend: Node.js + Express + Prisma
 - Database: PostgreSQL (NeonDB)
